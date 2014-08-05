@@ -1,0 +1,8 @@
+*.iws
+*.class
+atlassian-ide-plugin.xml
+z*.xml
+z*.txt
+z*.rdf
+z
+zz
