@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="2.0">
+	<meta>
+		<identity>
+			<uri>urn:overstory.co.uk:nk:modules:http-async:test</uri>
+			<version>1.0.0</version>
+		</identity>
+		<info>
+			<name>HTTP Async Client</name>
+			<description>Resource endpoints that encapsulate the complexity of making outbound, asynchronous HTTP calls.</description>
+			<icon>res:/http-async-client/pub/overstory-icon.png</icon>
+		</info>
+	</meta>
+
+	<system>
+		<dynamic/>
+	</system>
+
+	<rootspace name="HTTP Async Client - Unit Test Space" public="true" uri="urn:overstory.co.uk:nk:modules:http-async:test">
+		<fileset>
+			<regex>res:/etc/system/Tests.xml</regex>
+		</fileset>
+		<fileset>
+			<regex>res:/resources/test/.*</regex>
+		</fileset>
+		<fileset>
+			<regex>res:/resources/config/.*</regex>
+		</fileset>
+
+		<endpoint><!-- stop any configuration from module under test from polluting address space -->
+			<prototype>Limiter</prototype>
+			<grammar>res:/etc/
+				<regex type="anything"/>
+			</grammar>
+		</endpoint>
+
+		<mapper>
+			<config>res:/resources/test/callbacks/mappings.xml</config>
+			<space>
+
+			</space>
+		</mapper>
+
+		<import><!-- import the main space which we are testing -->
+			<uri>urn:overstory.co.uk:nk:modules:http-async</uri>
+		</import>
+		<import>
+			<uri>urn:org:netkernel:ext:layer1</uri>
+			<private/>
+		</import>
+
+		<import>
+			<uri>urn:org:netkernel:mod:restassured</uri>
+		</import>
+		<import>
+			<private/>
+			<uri>urn:org:netkernel:tpt:http</uri>
+		</import>
+		<import>
+			<uri>urn:org:netkernel:client:http</uri>
+		</import>
+		<import>
+			<uri>urn:org:netkernel:lang:groovy</uri>
+		</import>
+		<import>
+			<uri>urn:org:netkernel:xml:core</uri>
+		</import>
+		<import>
+			<uri>urn:org:netkernel:xml:saxon</uri>
+		</import>
+		<import>
+			<uri>urn:org:netkernel:ext:system</uri>
+			<!--Required for Exception to DOM Transreptor-->
+		</import>
+	</rootspace>
+
+	<rootspace uri="urn:overstory.co.uk:nk:modules:http-async:test:web-server" public="true" name="HTTP Async dummy web server">
+		<fileset>
+			<regex>res:/etc/system/SimpleDynamicImportHook.xml</regex>
+		</fileset>
+
+		<overlay>
+			<prototype>RESTOverlay</prototype>
+			<config>
+				<basepath>/http-async/test-server/</basepath>
+				<auto404/>
+			</config>
+			<space>
+				<mapper>
+					<config>res:/resources/test-server/mappings.xml</config>
+					<space>
+						<import>
+							<uri>urn:org:netkernel:client:http</uri>
+						</import>
+						<import>
+							<uri>urn:org:netkernel:lang:groovy</uri>
+						</import>
+						<import>
+							<private/>
+							<uri>urn:org:netkernel:tpt:http</uri>
+						</import>
+
+						<fileset>
+							<regex>res:/resources/.*</regex>
+						</fileset>
+					</space>
+				</mapper>
+			</space>
+		</overlay>
+
+		<import>
+			<private/>
+			<uri>urn:org:netkernel:tpt:http</uri>
+		</import>
+		<fileset>
+			<regex>res:/http-async-client/pub/overstory-icon.png</regex>
+		</fileset>
+	</rootspace>
+
+</module>

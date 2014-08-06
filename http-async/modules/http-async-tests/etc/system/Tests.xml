@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests>
+	<test>
+		<id>test:urn:overstory.co.uk:nk:modules:http-async</id>
+		<name>HTTP Async Client</name>
+		<desc>Resource endpoints that encapsulate the complexity of making outbound, asynchronous HTTP calls.</desc>
+		<uri>res:/resources/test/testlist.xml</uri>
+	</test>
+</tests>

@@ -1,0 +1,43 @@
+import org.netkernel.layer0.nkf.INKFAsyncRequestListener
+import org.netkernel.layer0.nkf.INKFRequest
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponseReadOnly
+import org.netkernel.layer0.nkf.NKFException
+
+INKFRequestContext context = context
+
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "http://localhost:5000/record/id/urn:overstory.co.uk:id:group:other")
+
+req.addArgumentByValue ("credentials", context.source ("res:/resources/config/http-credentials.xml"))
+req.addArgument ("callback-uri", "active:myHttpGetResponder")
+req.addArgument ("golden-thread", "foo")
+req.addArgument ("golden-thread", "bar")
+
+//req.addArgumentByValue ("listener", new MyListener())
+req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
+
+resp = context.issueRequestForResponse (req)
+
+context.createResponseFrom (resp)
+
+// ---------------------------------
+
+class MyListener implements INKFAsyncRequestListener
+{
+	@Override
+	void receiveResponse (INKFResponseReadOnly response, INKFRequestContext context) throws Exception
+	{
+		println ("In My Normal Result Handler")
+		context.createResponseFrom ("Yeah Baby").setMimeType ("text/plain")
+	}
+
+	@Override
+	void receiveException (NKFException exception, INKFRequest request, INKFRequestContext context) throws Exception
+	{
+		println ("In My Exception Handler")
+
+		context.createResponseFrom (exception)
+	}
+}

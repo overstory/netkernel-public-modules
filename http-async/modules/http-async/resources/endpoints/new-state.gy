@@ -1,0 +1,17 @@
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFRequestReadOnly
+import org.netkernel.layer0.nkf.INKFResponse
+
+// This returns a state object that is marked as expired so that it cannot be re-used elsewhere
+
+INKFRequestContext context = context
+
+req = context.createRequest ("active:httpState")
+req.setVerb (INKFRequestReadOnly.VERB_NEW)
+req.addArgument ("credentials", "arg:credentials")
+String stateId = context.issueRequest (req)
+
+resp = context.createResponseFrom (stateId)
+
+// Make sure state resource always expires so it cannot be re-used
+resp.setExpiry (INKFResponse.EXPIRY_ALWAYS);

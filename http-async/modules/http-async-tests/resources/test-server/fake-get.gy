@@ -1,0 +1,11 @@
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponse
+
+INKFRequestContext context = context
+
+String code = context.getThisRequest().getArgumentValue ("response-code")
+String body = (context.getThisRequest().argumentExists ("body")) ? context.getThisRequest().getArgumentValue ("body") : "This is a fake result body"
+
+INKFResponse response = context.createResponseFrom (body)
+response.setHeader ("httpResponse:/code", code)
+response.setMimeType ("text/plain")

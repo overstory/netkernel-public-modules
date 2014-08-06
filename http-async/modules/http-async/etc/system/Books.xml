@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<books>
+	<book>
+		<id>book:urn:overstory.co.uk:nk:modules:http-async</id>
+		<title>HTTP Async Client</title>
+		<desc>Resource endpoints that encapsulate the complexity of making outbound, asynchronous HTTP calls.</desc>
+		<toc>
+			<item id="urn:overstory.co.uk:nk:modules:http-async:guide"/>
+			
+		</toc>
+	</book>
+</books>

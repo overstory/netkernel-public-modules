@@ -1,0 +1,23 @@
+<config>
+	<endpoint>
+		<grammar>
+			<active>
+				<identifier>res:/httpAsync/test/return-string</identifier>
+				<argument name="http-response"/>
+			</active>
+		</grammar>
+		<request>
+			<identifier>active:groovy</identifier>
+			<argument name="operator">
+				<literal type="string">
+					ByteArrayOutputStream baos = new ByteArrayOutputStream()
+					rep = context.source ("arg:http-response")
+					rep.getEntity().write (baos)
+
+					resp = context.createResponseFrom (new String (baos.toByteArray())).setMimeType("text/plain")
+				</literal>
+			</argument>
+			<argument name="http-response">arg:http-response</argument>
+		</request>
+	</endpoint>
+</config>

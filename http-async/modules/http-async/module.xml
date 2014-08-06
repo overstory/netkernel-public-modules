@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="2.0">
+   <meta>
+      <identity>
+         <uri>urn:overstory.co.uk:nk:modules:http-async</uri>
+         <version>1.0.0</version>
+      </identity>
+      <info>
+         <name>HTTP Async Client</name>
+         <description>Resource endpoints that encapsulate the complexity of making outbound, asynchronous HTTP calls.</description>
+         <icon>res:/http-async-client/pub/overstory-icon.png</icon>
+      </info>
+   </meta>
+
+   <system>
+      <dynamic/>
+   </system>
+
+   <rootspace name="HTTP Async Client - Development Space" uri="urn:overstory.co.uk:nk:modules:http-async">
+	   <mapper>
+		   <config>
+			   <endpoint>
+				   <grammar>
+						<active>
+							<identifier>active:httpAsync</identifier>
+							<argument name="method" desc="Outgoing HTTP method to use"/>
+							<argument name="url" desc="The URL to connect to"/>
+							<argument name="callback" desc="An instance of INKFAsyncRequestListener which will be called upon completion" min="0"/>
+							<argument name="callback-uri" desc="URI of a resource that will be passed an HttpClientResponseRepresentation instance (as arg 'http-response)'.  The response will be the passed through." min="0"/>
+							<argument name="golden-thread" desc="Golden Thread ID(s) to attach to the response" min="0" max="*"/>
+							<argument name="body" desc="Optional HTTP representation body" min="0"/>
+							<argument name="headers" desc="Optional HTTP headers to set on request" min="0"/>
+							<argument name="config" desc="Optional HTTP config (see active:httpGet)" min="0"/>
+							<argument name="oauth" desc="Optional OAuth credentials (see active:httpGet)" min="0"/>
+							<argument name="connectionManager" desc="Optional connectionManager (see active:httpGet)" min="0"/>
+							<argument name="state" desc="Optional HTTP state with credentials.  If provided, client is responsible for managing this (see active:httpGet)" min="0"/>
+							<argument name="credentials" desc="Optional credentials to use to create a new 'state' object.  Ignored if 'state' argument given (see active:httpState)" min="0"/>
+						</active>
+				   </grammar>
+				   <request>
+						<identifier>active:groovy</identifier>
+						<argument name="operator">res:/http-async-client/endpoints/async-client.gy</argument>
+						<varargs/>
+				   </request>
+			   </endpoint>
+
+			   <endpoint>
+				   <grammar>
+					   <active>
+						   <identifier>active:httpAsync/newState</identifier>
+						   <argument name="credentials"/>
+					   </active>
+				   </grammar>
+				   <request>
+					   <identifier>active:groovy</identifier>
+					   <argument name="operator">res:/http-async-client/endpoints/new-state.gy</argument>
+					   <argument name="credentials">arg:credentials</argument>
+				   </request>
+			   </endpoint>
+
+		   </config>
+		   <space>
+			   <import>
+				   <uri>urn:org:netkernel:lang:groovy</uri>
+			   </import>
+			   <import>
+				   <private/>
+				   <uri>urn:org:netkernel:tpt:http</uri>
+			   </import>
+			   <import>
+				   <uri>urn:org:netkernel:client:http</uri>
+			   </import>
+			   <import>
+				   <uri>urn:org:netkernel:mod:hds</uri>
+			   </import>
+
+			   <fileset>
+				   <regex>res:/resources/.*</regex>
+			   </fileset>
+		   </space>
+	   </mapper>
+
+	   <import>
+		   <uri>urn:org:netkernel:lang:groovy</uri>
+	   </import>
+	   <import>
+		   <private/>
+		   <uri>urn:org:netkernel:tpt:http</uri>
+	   </import>
+	   <import>
+		   <uri>urn:org:netkernel:client:http</uri>
+	   </import>
+	   <import>
+		   <uri>urn:org:netkernel:mod:hds</uri>
+	   </import>
+
+	   <fileset><!--Icon-->
+         <regex>res:/http-async-client/pub/(.*)</regex>
+         <rewrite>res:/resources/pub/$1</rewrite>
+      </fileset>
+	   <fileset>
+         <regex>res:/http-async-client/endpoints/(.*)</regex>
+         <rewrite>res:/resources/endpoints/$1</rewrite>
+      </fileset>
+   </rootspace>
+
+   <rootspace name="HTTP Async Client - Documentation Space" public="true" uri="urn:overstory.co.uk:nk:modules:http-async:doc">
+      <fileset>
+         <regex>res:/etc/system/(Books|Docs).xml</regex>
+      </fileset>
+      <fileset>
+         <regex>res:/resources/doc/.*</regex>
+      </fileset>
+   </rootspace>
+</module>

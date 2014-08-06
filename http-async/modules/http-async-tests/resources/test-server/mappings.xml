@@ -1,0 +1,47 @@
+<config>
+
+	<endpoint>
+		<meta>
+			<rest>
+				<simple>generic/{response-code}/{body}</simple>
+				<method>GET</method>
+				<Etag>SHA1</Etag>
+				<compress/>
+			</rest>
+		</meta>
+		<grammar>
+			<active>
+				<identifier>active:httpAsync/fake-get</identifier>
+				<argument name="response-code"/>
+				<argument name="body" min="0"/>
+			</active>
+		</grammar>
+		<request>
+			<identifier>active:groovy</identifier>
+			<argument name="operator">res:/resources/test-server/fake-get.gy</argument>
+			<argument name="response-code">arg:response-code</argument>
+			<argument name="body">arg:body</argument>
+		</request>
+	</endpoint>
+
+	<endpoint>
+		<meta>
+			<rest>
+				<simple>generic/{result-code}</simple>
+				<method>POST</method>
+				<Etag>SHA1</Etag>
+				<compress/>
+			</rest>
+		</meta>
+		<grammar>
+			<active>
+				<identifier>active:httpAsync/fake-post</identifier>
+			</active>
+		</grammar>
+		<request>
+			<identifier>active:groovy</identifier>
+			<argument name="operator">res:/resources/test-server/sink-post.gy</argument>
+		</request>
+	</endpoint>
+
+</config>
