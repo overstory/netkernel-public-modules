@@ -2,7 +2,7 @@
 	<endpoint>
 		<grammar>
 			<active>
-				<identifier>res:/httpAsync/test/return-string</identifier>
+				<identifier>active:/httpAsync/test/return-string</identifier>
 				<argument name="http-response"/>
 			</active>
 		</grammar>

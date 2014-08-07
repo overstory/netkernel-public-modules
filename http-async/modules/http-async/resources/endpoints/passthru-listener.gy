@@ -1,0 +1,26 @@
+import org.netkernel.layer0.nkf.INKFAsyncRequestListener
+import org.netkernel.layer0.nkf.INKFRequest
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponseReadOnly
+import org.netkernel.layer0.nkf.NKFException
+
+// This returns an instance of INKFAsyncRequestListener which simply passes through the async response
+
+context.createResponseFrom (new PassThruListener())
+
+// -----------------------------------
+
+class PassThruListener implements INKFAsyncRequestListener
+{
+	@Override
+	void receiveResponse (INKFResponseReadOnly response, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (response)
+	}
+
+	@Override
+	void receiveException (NKFException exception, INKFRequest request, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (exception)
+	}
+}

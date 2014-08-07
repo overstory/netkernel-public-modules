@@ -1,6 +1,7 @@
-import org.netkernel.layer0.nkf.INKFAsyncRequestListener
+import org.netkernel.layer0.nkf.INKFAsyncRequestHandle
 import org.netkernel.layer0.nkf.INKFRequest
 import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponseReadOnly
 
 INKFRequestContext context = context
 
@@ -9,6 +10,13 @@ req.addArgumentByValue ("method", "GET")
 req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
 req.addArgument ("callback-uri", "active:/httpAsync/test/return-string")
 
-context.issueAsyncRequest (req).setListener (context.source ("active:httpAsync/passthru-listener", INKFAsyncRequestListener.class))
-context.setNoResponse()		// Causes immediate return, passthru listener will wake us up on completion
+INKFAsyncRequestHandle handle = context.issueAsyncRequest (req)
+
+// Do some other stuff
+
+// Rendezvous with the async request, possibly waiting until it's done
+INKFResponseReadOnly response = handle.joinForResponse()
+context.createResponseFrom (response)
+
+
 

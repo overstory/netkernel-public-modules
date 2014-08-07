@@ -41,12 +41,13 @@
 				   </grammar>
 				   <request>
 						<identifier>active:groovy</identifier>
-						<argument name="operator">res:/http-async-client/endpoints/async-client.gy</argument>
+						<argument name="operator">res:/http-async-client/endpoints/http-async.gy</argument>
 						<varargs/>
 				   </request>
 			   </endpoint>
 
 			   <endpoint>
+				   <id>urn:overstory.co.uk:nk:endpoints:http-async:new-state</id>
 				   <grammar>
 					   <active>
 						   <identifier>active:httpAsync/newState</identifier>
@@ -57,6 +58,20 @@
 					   <identifier>active:groovy</identifier>
 					   <argument name="operator">res:/http-async-client/endpoints/new-state.gy</argument>
 					   <argument name="credentials">arg:credentials</argument>
+				   </request>
+			   </endpoint>
+
+			   <endpoint>
+				   <id>urn:overstory.co.uk:nk:endpoints:http-async:passthru-listener</id>
+				   <description>Returns an re-entrant instance of INKFAsyncRequestListener which passes responses through without modification</description>
+				   <grammar>
+					   <active>
+						   <identifier>active:httpAsync/passthru-listener</identifier>
+					   </active>
+				   </grammar>
+				   <request>
+					   <identifier>active:groovy</identifier>
+					   <argument name="operator">res:/http-async-client/endpoints/passthru-listener.gy</argument>
 				   </request>
 			   </endpoint>
 

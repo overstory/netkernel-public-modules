@@ -28,4 +28,11 @@
 		<uri>res:/resources/doc/callback-uri.txt</uri>
 	</doc>
 
+	<doc>
+		<id>urn:overstory.co.uk:nk:modules:http-async:guide:passthru</id>
+		<title>Pass-Through Listener</title>
+		<desc>Convenience pass-through async listner</desc>
+		<uri>res:/resources/doc/pass-thru.txt</uri>
+	</doc>
+
 </docs>

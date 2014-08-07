@@ -19,7 +19,8 @@ req.addArgumentByValue ("method", "GET")
 req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
 req.addArgument ("callback-uri", "active:myHttpGetResponder")
 
-context.createResponseFrom (context.issueRequestForResponse (req))
+context.issueAsyncRequest (req).setListener (context.source ("active:httpAsync/passthru-listener", INKFAsyncRequestListener.class))
+context.setNoResponse()		// Causes immediate return, passthru listener will wake us up on completion
 {/java}
 
 The endpoint (<code>active:myHttpGetResponder</code>) must be resolvable by this endpoint, but
@@ -54,6 +55,25 @@ received content type.
 			def rep = context.source ("arg:http-response")
 
 			context.createResponseFrom (rep.getEntity()).setMimeType (rep.getHeader("Content-Type"))
+		</literal>
+	</argument>
+	<argument name="http-response">arg:http-response</argument>
+</request>
+{/xml}
+
+But also note that the handler need not pass along the received response at all.  It can choose to do
+anything it wishes:
+
+{xml}
+<request>
+	<identifier>active:groovy</identifier>
+	<argument name="operator">
+		<literal type="string">
+			def rep = context.source ("arg:http-response")
+
+			String result = (rep.getResponseCode() == 200) ? "Success" : "Fail"
+
+			context.createResponseFrom (result).setMimeType ("text/plain")
 		</literal>
 	</argument>
 	<argument name="http-response">arg:http-response</argument>

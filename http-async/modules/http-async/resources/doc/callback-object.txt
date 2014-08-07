@@ -26,7 +26,8 @@ req.addArgumentByValue ("callback", new MyListener())
 // This prevents our response from depending on the transient listener object
 req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
 
-context.createResponseFrom (context.issueRequestForResponse (req))
+context.issueAsyncRequest (req).setListener (context.source ("active:httpAsync/passthru-listener", INKFAsyncRequestListener.class))
+context.setNoResponse()		// Causes immediate return, passthru listener will wake us up on completion
 
 // ---------------------------------
 

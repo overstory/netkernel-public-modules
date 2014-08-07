@@ -4,21 +4,78 @@ This resource encapsulates the standard NetKernel asynchronous HTTP client
 resources ([[doc:client:http:async|active:httpAsyncGet, active:httpAsyncPut, etc]]) but simplifies their
 useage by encapsulating the  complexity of responding to completion notification.
 
-Most of the arguments are just passed directly on the the delegated
+Most of the arguments are just passed directly on to the the delegated
 NetKernel endpoint (see the [[doc:client:http:async|docs for those builtins]]).  The only required arguments
 are <code>method</code> and <code>url</code>.  The <code>url</code> argument is passed through, but <code>method</code>
 is used to determine which type of request to make (GET, PUT, POST, DELETE, etc).  Case is not significant.
 
-When issuing a request to this endpoint, it behaves as if it's synchronous.  It will not complete until the
-response has been recieved from the requested URL.  But the issuing thread does not wait, it is returned to
-NetKernel to do other processing until the operation is in progress.  When it does complete, NetKernel notifies
-the listener that was registered on your behalf to then complete creation of the response.
+== Immediate Return ==
+
+When issuing a request to this endpoint, return is immediate while the asynchronous operation continues to run.
+You can then do other things, such as issue other requests, or choose to return no response to allow your thread
+to be recycled by NetKernel until the request is complete.  If you return no response, then it is the responsibility
+of the callback handler to complete the processing and produce the final result.
+
+If you choose to return immediately, it is necessary that you set an async listener for yourself so that NetKernel
+can rendezvous and complete the asynchronous request.  The point of this endpoint is to free you from that sort
+of boilerplate, so there is a convenience endpoint to setup a pass-through listener for you.  An example of
+doing an immediate return looks like this:
+
+{java}
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
+req.addArgument ("callback-uri", "active:/httpAsync/test/return-string")
+
+context.issueAsyncRequest (req).setListener (context.source ("active:httpAsync/passthru-listener", INKFAsyncRequestListener.class))
+context.setNoResponse()		// Causes immediate return, passthru listener will wake us up on completion
+{/java}
+
+This will set things up so that the callback you provided is invoked upon completion but the thread that called
+you can be returned to NetKernel.
+
+== Overlapped Processing ==
+
+If you wish to overlap processing within your endpoint, you can use this to kick out an async thread that will run
+in parallel, then join up with that thread when you need the response.  In this case you don't need to register
+a pass-through listener because you'll be explcitly reaping the async response.  While it's possible to initiate
+multiple async requests at once, you will need to be careful to manage all the handles and join all of them before
+returning.
+
+This is an example of overlapping with an async request:
+
+{java}
+import org.netkernel.layer0.nkf.INKFAsyncRequestHandle
+import org.netkernel.layer0.nkf.INKFRequest
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponseReadOnly
+
+INKFRequestContext context = context
+
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
+req.addArgument ("callback-uri", "active:/httpAsync/test/return-string")
+
+INKFAsyncRequestHandle handle = context.issueAsyncRequest (req)
+
+// Do some other stuff
+INKFRequest req2 = context.createRequest ("active:foo/bar/blah")
+resp2 = context.issueRequest(req2)
+...
+
+// Rendezvous with the async request, possibly waiting until it's done
+INKFResponseReadOnly response = handle.joinForResponse()
+context.createResponseFrom (response)
+{/java}
+
+== Callback Options ==
 
 There are three options for specifying how to handle completion processing:
 
 * Provide an instance of INKFAsyncRequestListener with the <code>callback</code> argument. Upon completion the appropriate method will be invoked on this object to create a response.
-* Provide an endpoint URI with the <code>callback-uri</code> argument.  Upon successful completion the endpoint at the given URI will be called with an instance of [[doc:client:http:httpclientresponserepresentation|HttpClientResponseRepresentation]] as the argument <code>http-response</code>.  The response produced will become the ultimate response of the asynchronous HTTP request.  If an exception is thrown by the async thread, the exception will be returned as the response representation.  If both <code>callback</code> and <code>callback-uri</code> are provided, <code>callback</code> takes precedence.
-* Don't provide either.  If no callback is given, then upon successful completion the HTTP response code, the headers and the body, if any, of the received HTTP response will be copied to construct a corresponding response.  Not that this option assumes that the client is running in the context of an inbound HTTP request and that [[doc:tpt:http:httpResponse|httpRequest:]] is in scope.
+* Provide an endpoint URI with the <code>callback-uri</code> argument.  Upon successful completion the endpoint at that URI will be called with an instance of [[doc:client:http:httpclientresponserepresentation|HttpClientResponseRepresentation]] as the argument <code>http-response</code>.  The response produced will become the ultimate response of the asynchronous HTTP request.  If an exception is thrown by the async thread, the exception will be returned as the response representation.  If both <code>callback</code> and <code>callback-uri</code> are provided, <code>callback</code> takes precedence.
+* Don't provide either.  If no callback is given, then upon successful completion the HTTP response code, the headers and the body, if any, of the received HTTP response will be copied to construct a corresponding response.  Note that this option assumes that the client is running in the context of an inbound HTTP request and that [[doc:tpt:http:httpResponse|httpRequest:]] is in scope.
 
 It is also possible to provide one or more golden thread IDs, via the <code>golden-thread</code> argument, that will be attached to the response before returning it.
 

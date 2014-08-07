@@ -1,4 +1,12 @@
-import org.netkernel.layer0.nkf.INKFAsyncRequestListener
+{endpoint}urn:overstory.co.uk:nk:endpoints:http-async:passthru-listener{/endpoint}
+
+== Pass-Through Listener ==
+
+This is a convenience endpoint that returns a sharable instance of INKFAsyncRequestListener.
+It is typically used when it is desirable to return no response after starting an async HTTP
+request.  Example usage is:
+
+{java}
 import org.netkernel.layer0.nkf.INKFRequest
 import org.netkernel.layer0.nkf.INKFRequestContext
 
@@ -7,8 +15,8 @@ INKFRequestContext context = context
 INKFRequest req = context.createRequest ("active:httpAsync")
 req.addArgumentByValue ("method", "GET")
 req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
-req.addArgument ("callback-uri", "active:/httpAsync/test/return-string")
+req.addArgument ("callback-uri", "active:myHttpGetResponder")
 
 context.issueAsyncRequest (req).setListener (context.source ("active:httpAsync/passthru-listener", INKFAsyncRequestListener.class))
 context.setNoResponse()		// Causes immediate return, passthru listener will wake us up on completion
-
+{/java}

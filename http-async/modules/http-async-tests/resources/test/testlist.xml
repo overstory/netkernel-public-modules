@@ -14,43 +14,30 @@
 			<stringEquals>This is the value of the representation</stringEquals>
 		</assert>
 	</test>
-	
-	<notest name="Async GET with callback object - Now really Non-blocking Async - but can't work">
+
+	<test name="Async GET with callback-uri">
 		<request>
 			<identifier>active:groovy</identifier>
-			<argument name="operator">res:/resources/test/callback-object-no-response.gy</argument>
-			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is the value of the representation</argument>
+			<argument name="operator">res:/resources/test/callback-uri.gy</argument>
+			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is some other value of the representation</argument>
 		</request>
 		<assert>
 			<notNull/>
 			<mimetype>text/plain</mimetype>
-			<stringEquals>This is the value of the representation</stringEquals>
-		</assert>
-	</notest>
-	
-	<test name="Async GET with callback object - Now really Non-blocking Async - but only locally async">
-		<request>
-			<identifier>active:groovy</identifier>
-			<argument name="operator">res:/resources/test/callback-object-async-handle.gy</argument>
-			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is the value of the representation</argument>
-		</request>
-		<assert>
-			<notNull/>
-			<mimetype>text/plain</mimetype>
-			<stringEquals>This is the value of the representation</stringEquals>
+			<stringEquals>This is some other value of the representation</stringEquals>
 		</assert>
 	</test>
-	
-	<test name="Async GET with callback object - Now really Non-blocking Async - truely async with two listeners!!">
+
+	<test name="Overlapped Async GET with callback-uri">
 		<request>
 			<identifier>active:groovy</identifier>
-			<argument name="operator">res:/resources/test/callback-object-no-response-two-listeners.gy</argument>
-			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is the value of the representation</argument>
+			<argument name="operator">res:/resources/test/callback-uri-overlapped.gy</argument>
+			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is an overlapped representation</argument>
 		</request>
 		<assert>
 			<notNull/>
 			<mimetype>text/plain</mimetype>
-			<stringEquals>This is the value of the representation</stringEquals>
+			<stringEquals>This is an overlapped representation</stringEquals>
 		</assert>
 	</test>
 
@@ -59,7 +46,7 @@
 			<identifier>active:httpAsync</identifier>
 			<argument name="method" method="as-string">GET</argument>
 			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is a different value of the representation</argument>
-			<argument name="callback-uri">res:/httpAsync/test/return-string</argument>
+			<argument name="callback-uri">active:/httpAsync/test/return-string</argument>
 		</request>
 		<assert>
 			<notNull/>

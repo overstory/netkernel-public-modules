@@ -12,7 +12,6 @@ INKFRequestContext context = context
 
 try {
 	INKFRequestReadOnly thisReq = context.getThisRequest()
-
 	String method = context.source ("arg:method")
 
 	// A callback object takes precedence over a callback URI if both are given
@@ -22,10 +21,11 @@ try {
 	// Get the list of golden threads to attach to our response
 	List<String> goldenThreads = thisReq.getArgumentValues ("golden-thread")
 
-	// If a state is provided, use it.  Otherwise if crdentials are given then create a temp state using those
+	// If a state is provided, use it.  Otherwise if credentials are given then create a temp state using those
 	String stateId = (thisReq.argumentExists ("state")) ? context.source ("arg:state") : null
 	boolean hasCredentials = thisReq.argumentExists ("credentials")
-	String internalStateId = stateId = ((stateId == null) && hasCredentials) ? transientState (context) : null
+	String internalStateId = ((stateId == null) && hasCredentials) ? transientState (context) : null
+	if (stateId == null) stateId = internalStateId
 
 	// Create the async request that we will initiate with our private listener
 	INKFRequest req = context.createRequest ("active:httpAsync${casedMethod (method)}".toString())
@@ -38,10 +38,11 @@ try {
 	if (thisReq.argumentExists ("connectionManager")) req.addArgument ("connectionManager", "arg:connectionManager")
 	if (thisReq.argumentExists ("cache")) req.addArgument ("cache", "arg:cache")
 	if (stateId != null) req.addArgument ("state", stateId)
+
 	// We always ask for a structured HTTP response object
 	req.setRepresentationClass (HttpClientResponseRepresentation.class);
 
-	// Kick off the async operation and set out listener, then return so that the thread can be re-used
+	// Kick off the async operation and set our listener, then return so that the thread can be re-used
 	context.issueAsyncRequest (req).setListener (new CompletionListener (callback, callbackUri, goldenThreads, internalStateId))
 	context.setNoResponse()
 } catch (e) {
@@ -77,7 +78,7 @@ class CompletionListener implements INKFAsyncRequestListener
 
 		// Get the structured HTTP response object
 		HttpClientResponseRepresentation hcrr = httpResponse.getRepresentation() as HttpClientResponseRepresentation
-println ("RECV: " + hcrr)
+//println ("RECV: " + hcrr)
 
 		// If any golden thread IDs were given, attach them as dependencies to our response
 		if (goldenThreads.size() > 0) {
@@ -90,10 +91,13 @@ println ("RECV: " + hcrr)
 			// Delegate to the client-provided listener object
 			callback.receiveResponse (httpResponse, context)
 		} else if (callbackUri != null) {
-			// Resolve the client's resource handler with the HCRR as an argument
+			// Resolve the client's callback handler with the HCRR as an argument
 			INKFRequest req = context.createRequest (callbackUri)
 			req.addArgumentByValue ("http-response", hcrr)
-			context.createResponseFrom (context.issueRequestForResponse (req))
+
+			/*INKFResponse response =*/ context.createResponseFrom (context.issueRequestForResponse (req))
+//			response.setExpiry (INKFResponse.EXPIRY_NEVER)
+//			response.setNoCache()
 		} else {
 			// No client-provided handler, copy the HTTP response through as the response
 			// Note that this assumes that we're in the scope of an HTTP request and can construct a response
@@ -102,9 +106,11 @@ println ("RECV: " + hcrr)
 			response.setHeader ("httpResponse:/code", hcrr.getResponseCode())
 
 			hcrr.getImplementingHDS().getNodes("//httpHeaders/*").each { IHDSNode node ->
-				response.setHeader ("httpResponse:/header/${ node.getName() }".toString(), node.getFirstValue ("."))
+				response.setHeader ("httpResponse:/header/${ node.getName() }".toString(), node.getFirstValue ('.'))
 			}
 
+//			response.setExpiry (INKFResponse.EXPIRY_NEVER)
+//			response.setNoCache()
 			// ToDo: Look at cache control headers on response and set local cache expiry to match?
 		}
 	}
@@ -130,13 +136,13 @@ println ("RECV: " + hcrr)
 
 // Turns "GET" into "Get"
 
-def casedMethod (String input)
+def casedMethod (String method)
 {
-	"${input.charAt(0).toUpperCase()}${input.substring (1).toLowerCase()}".toString()
+	"${method.charAt(0).toUpperCase()}${method.substring (1).toLowerCase()}".toString()
 }
 
 // Creates a temporary HTTP State resource from the given credentials.  This object
-// will be destroyed when the sync operation is complete.
+// will be destroyed when the async operation is complete.
 
 def transientState (INKFRequestContext context)
 {
@@ -151,5 +157,4 @@ def transientState (INKFRequestContext context)
 }
 
 // -----------------------------------------------------------------
-
 
