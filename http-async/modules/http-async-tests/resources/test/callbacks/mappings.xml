@@ -14,7 +14,7 @@
 					rep = context.source ("arg:http-response")
 					rep.getEntity().write (baos)
 
-					resp = context.createResponseFrom (new String (baos.toByteArray())).setMimeType("text/plain")
+					context.createResponseFrom (new String (baos.toByteArray())).setMimeType ("text/plain")
 				</literal>
 			</argument>
 			<argument name="http-response">arg:http-response</argument>

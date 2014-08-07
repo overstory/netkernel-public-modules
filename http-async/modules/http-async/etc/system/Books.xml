@@ -3,10 +3,14 @@
 	<book>
 		<id>book:urn:overstory.co.uk:nk:modules:http-async</id>
 		<title>HTTP Async Client</title>
-		<desc>Resource endpoints that encapsulate the complexity of making outbound, asynchronous HTTP calls.</desc>
+		<desc>Resource endpoint that encapsulates the complexity of making outbound, asynchronous HTTP calls.</desc>
+		<icon>res:/http-async-client/pub/overstory-icon.png</icon>
+
 		<toc>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide"/>
-			
+			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:how-it-works"/>
+			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:callback:object"/>
+			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:callback:uri"/>
 		</toc>
 	</book>
 </books>

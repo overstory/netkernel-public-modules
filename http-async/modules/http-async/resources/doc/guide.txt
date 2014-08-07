@@ -1,0 +1,10 @@
+
+== HTTP Async Client ==
+
+This resource encapsulates the complexity of issuing and responding to asynchronous
+outbound HTTP requests.  It will initiate an asynchronous call to one of the HTTP
+client endpoints (active:httpAsyncGet, for example) depending on the 'method' argument
+and manage the response when it completes.
+
+
+{endpoint}urn:overstory.co.uk:nk:endpoints:http-async{/endpoint}

@@ -20,11 +20,13 @@
 	   <mapper>
 		   <config>
 			   <endpoint>
+				   <id>urn:overstory.co.uk:nk:endpoints:http-async</id>
+				   <description>Initiate async HTTP request and manage completion callbacks</description>
 				   <grammar>
 						<active>
 							<identifier>active:httpAsync</identifier>
-							<argument name="method" desc="Outgoing HTTP method to use"/>
-							<argument name="url" desc="The URL to connect to"/>
+							<argument name="method" desc="Outgoing HTTP method to use (GET, PUT, etc)"/>
+							<argument name="url" desc="The URL to make the outbound request to"/>
 							<argument name="callback" desc="An instance of INKFAsyncRequestListener which will be called upon completion" min="0"/>
 							<argument name="callback-uri" desc="URI of a resource that will be passed an HttpClientResponseRepresentation instance (as arg 'http-response)'.  The response will be the passed through." min="0"/>
 							<argument name="golden-thread" desc="Golden Thread ID(s) to attach to the response" min="0" max="*"/>
@@ -111,5 +113,9 @@
       <fileset>
          <regex>res:/resources/doc/.*</regex>
       </fileset>
+	   <fileset>
+		   <regex>res:/http-async-client/pub/(.*)</regex>
+		   <rewrite>res:/resources/pub/$1</rewrite>
+	   </fileset>
    </rootspace>
 </module>

@@ -1,0 +1,51 @@
+== Providing Completion Processing with a Java Object ==
+
+Providing an instance of INKFAsyncRequestListener provides the requestor the maximum flexibility
+in processing the response.  Upon completion, the appropriate method on the provided object will
+be called (either success or faiure) to produce a response.  This allows you to encapsulate the
+code for handling the response in a class that you instantiate and gives you full control of
+producing the final response.
+
+An example Groovy using this technique is:
+
+{java}
+import org.netkernel.layer0.nkf.INKFAsyncRequestListener
+import org.netkernel.layer0.nkf.INKFRequest
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponseReadOnly
+import org.netkernel.layer0.nkf.NKFException
+import org.netkernel.layer0.representation.IReadableBinaryStreamRepresentation
+
+INKFRequestContext context = context
+
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
+req.addArgumentByValue ("callback", new MyListener())
+
+// This prevents our response from depending on the transient listener object
+req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
+
+context.createResponseFrom (context.issueRequestForResponse (req))
+
+// ---------------------------------
+
+class MyListener implements INKFAsyncRequestListener
+{
+	@Override
+	void receiveResponse (INKFResponseReadOnly httpResponse, INKFRequestContext context) throws Exception
+	{
+		HttpClientResponseRepresentation hcrr = httpResponse.getRepresentation() as HttpClientResponseRepresentation
+
+		INKFResponse resp = context.createResponseFrom (hcrr.getEntity())
+		resp.setHeader ("httpResponse:/code", hcrr.getResponseCode())
+		resp.setMimeType (hcrr.getHeader ("Content-Type"))
+	}
+
+	@Override
+	void receiveException (NKFException exception, INKFRequest request, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (exception)
+	}
+}
+{/java}

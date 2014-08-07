@@ -1,0 +1,62 @@
+== Providing Completion Processing with an endpoint URI ==
+
+If you provide an endpoint URI with the <code>callback-uri</code> argument then that
+endpoint will be invoked upon successful completion.  The argument <code>http-response</code>
+will be set to and instance of HttpClientResponseRepresentation that encapsulates the
+HTTP response from <code>url</code>.  The response produced from the endpoint at
+<code>callback-uri</code> will become the final response.
+
+An example Groovy using this technique is:
+
+{java}
+import org.netkernel.layer0.nkf.INKFRequest
+import org.netkernel.layer0.nkf.INKFRequestContext
+
+INKFRequestContext context = context
+
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
+req.addArgument ("callback-uri", "active:myHttpGetResponder")
+
+context.createResponseFrom (context.issueRequestForResponse (req))
+{/java}
+
+The endpoint (<code>active:myHttpGetResponder</code>) must be resolvable by this endpoint, but
+can otherwise be implemented in any way you prefer.  The following is an example of a completion
+processor endpoint defined with declarative syntax.
+
+{xml}
+<request>
+	<identifier>active:groovy</identifier>
+	<argument name="operator">
+		<literal type="string">
+			ByteArrayOutputStream baos = new ByteArrayOutputStream()
+			def rep = context.source ("arg:http-response")
+			rep.getEntity().write (baos)
+
+			context.createResponseFrom (new String (baos.toByteArray())).setMimeType ("text/plain")
+		</literal>
+	</argument>
+	<argument name="http-response">arg:http-response</argument>
+</request>
+{/xml}
+
+The above assumes that the response is plain text, and creates a String from the body.  This is
+not necessary in most cases, and could be simplified to the following, which also copies across the
+received content type.
+
+{xml}
+<request>
+	<identifier>active:groovy</identifier>
+	<argument name="operator">
+		<literal type="string">
+			def rep = context.source ("arg:http-response")
+
+			context.createResponseFrom (rep.getEntity()).setMimeType (rep.getHeader("Content-Type"))
+		</literal>
+	</argument>
+	<argument name="http-response">arg:http-response</argument>
+</request>
+{/xml}
+
