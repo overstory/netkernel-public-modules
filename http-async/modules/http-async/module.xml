@@ -81,7 +81,7 @@
 			   </fileset>
 		   </space>
 	   </mapper>
-
+		<!--
 	   <import>
 		   <uri>urn:org:netkernel:lang:groovy</uri>
 	   </import>
@@ -95,6 +95,7 @@
 	   <import>
 		   <uri>urn:org:netkernel:mod:hds</uri>
 	   </import>
+	   -->
 
 	   <fileset><!--Icon-->
          <regex>res:/http-async-client/pub/(.*)</regex>
