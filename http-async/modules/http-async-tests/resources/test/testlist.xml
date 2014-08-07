@@ -40,6 +40,19 @@
 			<stringEquals>This is the value of the representation</stringEquals>
 		</assert>
 	</test>
+	
+	<test name="Async GET with callback object - Now really Non-blocking Async - truely async with two listeners!!">
+		<request>
+			<identifier>active:groovy</identifier>
+			<argument name="operator">res:/resources/test/callback-object-no-response-two-listeners.gy</argument>
+			<argument name="url">http://localhost:8080/http-async/test-server/generic/200/This is the value of the representation</argument>
+		</request>
+		<assert>
+			<notNull/>
+			<mimetype>text/plain</mimetype>
+			<stringEquals>This is the value of the representation</stringEquals>
+		</assert>
+	</test>
 
 	<test name="Declarative Async GET with callback URI">
 		<request>

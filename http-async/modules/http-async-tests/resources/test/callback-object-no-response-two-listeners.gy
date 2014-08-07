@@ -1,0 +1,69 @@
+import org.netkernel.layer0.nkf.INKFAsyncRequestListener
+import org.netkernel.layer0.nkf.INKFRequest
+import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponseReadOnly
+import org.netkernel.layer0.nkf.NKFException
+import org.netkernel.layer0.representation.IReadableBinaryStreamRepresentation
+
+INKFRequestContext context = context
+
+// Depends on "url" being passedin from outside
+
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "arg:url")
+req.addArgumentByValue ("callback", new MyListener())
+
+//req.addArgumentByValue ("credentials", context.source ("res:/resources/config/http-credentials.xml"))
+//req.addArgument ("golden-thread", "foo")
+//req.addArgument ("golden-thread", "bar")
+
+//req.addArgumentByValue ("listener", new MyListener())
+req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
+
+context.issueAsyncRequest (req).setListener(new MyTopListener())
+context.setNoResponse() //Let this thread carry on doing work for the kernel
+
+// ---------------------------------
+
+class MyTopListener implements INKFAsyncRequestListener
+{
+	@Override
+	void receiveResponse (INKFResponseReadOnly response, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (response)
+	}
+
+	@Override
+	void receiveException (NKFException exception, INKFRequest request, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (exception)
+	}
+}
+
+
+
+class MyListener implements INKFAsyncRequestListener
+{
+	
+	@Override
+	void receiveResponse (INKFResponseReadOnly response, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (entityAsString (response.getRepresentation().getEntity())).setMimeType ("text/plain")
+	}
+
+	@Override
+	void receiveException (NKFException exception, INKFRequest request, INKFRequestContext context) throws Exception
+	{
+		context.createResponseFrom (exception)
+	}
+
+	private String entityAsString (IReadableBinaryStreamRepresentation rep)
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream()
+
+		rep.write (baos)
+
+		new String (baos.toByteArray())
+	}
+}
