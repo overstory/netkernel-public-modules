@@ -1,15 +1,20 @@
+
+== Caching of Async Responses ==
+
 By default the underlying [[doc:client:http:httpGet|active:httpGet]] will make its response cacheable if the
 HTTP headers indicate that the resource may be cached.  Typically this will be a time-based expiration (as this is the only
 model possible with HTTP).
 
-Calls to the [[urn:overstory.co.uk:nk:modules:http-async:guide|active:httpAsync]] that involve pass-by-value arguments (such as callback listeners or the callback-uri argument) will mean that even though the lowest
+Calls to [[urn:overstory.co.uk:nk:modules:http-async:guide|active:httpAsync]] that involve pass-by-value arguments (such as callback listeners or the callback-uri argument) will mean that even though the lowest
 level active:httpGet client is returning a cacheable response, the ambiguous state of the callback function will be determined to be
 a side-effect by the NetKernel cache and so the active:httpAsync response will be uncacheable (actually it will have unreachable scope meaning that
 hits in the cache will not be possible).
 
+== Excluding Deoendencies ==
+
 If you intend to cache the response of your HTTP requests made via active:httpAsync then it is important that you take direct control
 and decouple the calling endpoint from the indeterminant side-effect dependencies introduced by using active:httpAsync.  You do this by
-setting the ''INKFRequest.HEADER_EXCLUDE_DEPENDENCIES'' request header... 
+setting the ''INKFRequest.HEADER_EXCLUDE_DEPENDENCIES'' request header:
 
 {java}
 INKFRequest req = context.createRequest ("active:httpAsync")
@@ -24,8 +29,18 @@ req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
 
 Excluding dependencies is essential if you use either of the callback or callback-uri approaches or you will not get caching.
 
+If fine control of caching is important, you should probably call the [[doc:client:http:async|active:httpAsync*]] endpoints
+directly and provide your own listener - then you will be free from any possible side-effects introduced by the active:httpAsync proxy.
+
 In addition, when this header is set, any golden threads that are set by the active:httpAsync request will be excluded as dependencies and you
 must attach these manually in the calling endpoint.
 
-If caching is very important to you it will probably be simpler to simply call the [[doc:client:http:async|active:httpAsyncGet]] endpoint directly and use your own listener - then you will
-be free from any possible side-effects introduced by the active:httpAsync proxy.
+== Golden Threads ==
+
+The ability of the HTTP Async proxy to attach golden threads is a convenience that's generally only useful with the default, "no callback" option.
+This is useful when you expect the final HTTP response to be cachable long term and you want the ability to snip the thread according to some
+criteria in the future.
+
+In addition, when this header is set, any golden threads that are set by the active:httpAsync request will be excluded as dependencies and you
+must attach these manually in the calling endpoint.
+

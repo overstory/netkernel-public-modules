@@ -2,7 +2,7 @@
 
 If you provide an endpoint URI with the <code>callback-uri</code> argument then that
 endpoint will be invoked upon successful completion.  The argument <code>http-response</code>
-will be set to and instance of HttpClientResponseRepresentation that encapsulates the
+will be set to an instance of HttpClientResponseRepresentation that encapsulates the
 HTTP response from <code>url</code>.  The response produced from the endpoint at
 <code>callback-uri</code> will become the final response.
 

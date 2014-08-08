@@ -3,7 +3,7 @@
 == Pass-Through Listener ==
 
 This is a convenience endpoint that returns a sharable instance of INKFAsyncRequestListener.
-It is typically used when it is desirable to return no response after starting an async HTTP
+It is typically used when it is desirable to return immediately after starting an async HTTP
 request.  Example usage is:
 
 {java}

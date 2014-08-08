@@ -1,8 +1,8 @@
 == How the Async HTTP Client Works ==
 
-This resource encapsulates the standard NetKernel asynchronous HTTP client
+This endpoint encapsulates the standard NetKernel asynchronous HTTP client
 resources ([[doc:client:http:async|active:httpAsyncGet, active:httpAsyncPut, etc]]) but simplifies their
-useage by encapsulating the  complexity of responding to completion notification.
+usage by encapsulating the  complexity of responding to completion notification.
 
 Most of the arguments are just passed directly on to the the delegated
 NetKernel endpoint (see the [[doc:client:http:async|docs for those builtins]]).  The only required arguments
@@ -75,7 +75,7 @@ There are three options for specifying how to handle completion processing:
 
 * Provide an instance of INKFAsyncRequestListener with the <code>callback</code> argument. Upon completion the appropriate method will be invoked on this object to create a response.
 * Provide an endpoint URI with the <code>callback-uri</code> argument.  Upon successful completion the endpoint at that URI will be called with an instance of [[doc:client:http:httpclientresponserepresentation|HttpClientResponseRepresentation]] as the argument <code>http-response</code>.  The response produced will become the ultimate response of the asynchronous HTTP request.  If an exception is thrown by the async thread, the exception will be returned as the response representation.  If both <code>callback</code> and <code>callback-uri</code> are provided, <code>callback</code> takes precedence.
-* Don't provide either.  If no callback is given, then upon successful completion the HTTP response code, the headers and the body, if any, of the received HTTP response will be copied to construct a corresponding response.  Note that this option assumes that the client is running in the context of an inbound HTTP request and that [[doc:tpt:http:httpResponse|httpRequest:]] is in scope.
+* Don't provide either.  If no callback is given, then upon successful completion the HTTP response code, the headers and the body, if any, of the received HTTP response will be copied to construct a corresponding response.  Note that this option assumes that the client is running in the context of an inbound HTTP request and that [[doc:tpt:http:httpResponse|httpResponse:]] is in scope.
 
 It is also possible to provide one or more golden thread IDs, via the <code>golden-thread</code> argument, that will be attached to the response before returning it.
 

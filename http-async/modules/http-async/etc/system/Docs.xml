@@ -34,12 +34,19 @@
 		<desc>Convenience pass-through async listner</desc>
 		<uri>res:/resources/doc/pass-thru.txt</uri>
 	</doc>
-	
+
 	<doc>
 		<id>urn:overstory.co.uk:nk:modules:http-async:guide:caching</id>
 		<title>Caching</title>
 		<desc>Caching considerations</desc>
 		<uri>res:/resources/doc/caching.txt</uri>
+	</doc>
+
+	<doc>
+		<id>urn:overstory.co.uk:nk:modules:http-async:guide:license</id>
+		<title>License</title>
+		<desc>Apache v2.0 License Notice</desc>
+		<uri>res:/resources/doc/license.txt</uri>
 	</doc>
 
 </docs>

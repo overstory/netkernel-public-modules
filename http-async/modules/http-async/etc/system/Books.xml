@@ -13,6 +13,7 @@
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:callback:object"/>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:callback:uri"/>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:passthru"/>
+			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:license"/>
 		</toc>
 	</book>
 </books>
