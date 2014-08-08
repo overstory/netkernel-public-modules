@@ -1,0 +1,31 @@
+By default the underlying [[doc:client:http:httpGet|active:httpGet]] will make its response cacheable if the
+HTTP headers indicate that the resource may be cached.  Typically this will be a time-based expiration (as this is the only
+model possible with HTTP).
+
+Calls to the [[urn:overstory.co.uk:nk:modules:http-async:guide|active:httpAsync]] that involve pass-by-value arguments (such as callback listeners or the callback-uri argument) will mean that even though the lowest
+level active:httpGet client is returning a cacheable response, the ambiguous state of the callback function will be determined to be
+a side-effect by the NetKernel cache and so the active:httpAsync response will be uncacheable (actually it will have unreachable scope meaning that
+hits in the cache will not be possible).
+
+If you intend to cache the response of your HTTP requests made via active:httpAsync then it is important that you take direct control
+and decouple the calling endpoint from the indeterminant side-effect dependencies introduced by using active:httpAsync.  You do this by
+setting the ''INKFRequest.HEADER_EXCLUDE_DEPENDENCIES'' request header... 
+
+{java}
+INKFRequest req = context.createRequest ("active:httpAsync")
+req.addArgumentByValue ("method", "GET")
+req.addArgument ("url", "arg:url")         // url was passed to this endpoint as an argument
+req.addArgumentByValue ("callback", new MyListener())
+// Prevent our response from depending on the transient listener object
+req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
+
+//You now need to take care of the expiration of the final response yourself in the callback listener.
+{/java}
+
+Excluding dependencies is essential if you use either of the callback or callback-uri approaches or you will not get caching.
+
+In addition, when this header is set, any golden threads that are set by the active:httpAsync request will be excluded as dependencies and you
+must attach these manually in the calling endpoint.
+
+If caching is very important to you it will probably be simpler to simply call the [[doc:client:http:async|active:httpAsyncGet]] endpoint directly and use your own listener - then you will
+be free from any possible side-effects introduced by the active:httpAsync proxy.

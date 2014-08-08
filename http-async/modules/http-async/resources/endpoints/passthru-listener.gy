@@ -6,7 +6,8 @@ import org.netkernel.layer0.nkf.NKFException
 
 // This returns an instance of INKFAsyncRequestListener which simply passes through the async response
 
-context.createResponseFrom (new PassThruListener())
+resp=context.createResponseFrom (new PassThruListener())
+resp.setExpiry(resp.EXPIRY_NEVER)
 
 // -----------------------------------
 

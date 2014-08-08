@@ -9,6 +9,7 @@
 		<toc>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide"/>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:how-it-works"/>
+			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:caching"/>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:callback:object"/>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:callback:uri"/>
 			<item id="urn:overstory.co.uk:nk:modules:http-async:guide:passthru"/>
