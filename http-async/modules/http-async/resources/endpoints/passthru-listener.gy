@@ -17,13 +17,13 @@
 import org.netkernel.layer0.nkf.INKFAsyncRequestListener
 import org.netkernel.layer0.nkf.INKFRequest
 import org.netkernel.layer0.nkf.INKFRequestContext
+import org.netkernel.layer0.nkf.INKFResponse
 import org.netkernel.layer0.nkf.INKFResponseReadOnly
 import org.netkernel.layer0.nkf.NKFException
 
 // This returns an instance of INKFAsyncRequestListener which simply passes through the async response
 
-resp=context.createResponseFrom (new PassThruListener())
-resp.setExpiry(resp.EXPIRY_NEVER)
+context.createResponseFrom (new PassThruListener ()).setExpiry (INKFResponse.EXPIRY_NEVER)
 
 // -----------------------------------
 

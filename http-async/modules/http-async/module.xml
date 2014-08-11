@@ -33,7 +33,7 @@
       <dynamic/>
    </system>
 
-   <rootspace name="HTTP Async Client - Development Space" uri="urn:overstory.co.uk:nk:modules:http-async">
+   <rootspace name="HTTP Async Client" public="true" uri="urn:overstory.co.uk:nk:modules:http-async">
 	   <mapper>
 		   <config>
 			   <endpoint>
@@ -139,7 +139,7 @@
       </fileset>
    </rootspace>
 
-   <rootspace name="HTTP Async Client - Documentation Space" public="true" uri="urn:overstory.co.uk:nk:modules:http-async:doc">
+   <rootspace name="HTTP Async Client - Documentation" public="true" uri="urn:overstory.co.uk:nk:modules:http-async:doc">
       <fileset>
          <regex>res:/etc/system/(Books|Docs).xml</regex>
       </fileset>

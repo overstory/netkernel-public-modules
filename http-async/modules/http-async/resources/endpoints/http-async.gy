@@ -59,6 +59,9 @@ try {
 	// We always ask for a structured HTTP response object
 	req.setRepresentationClass (HttpClientResponseRepresentation.class);
 
+	// We don't want our response to depend on the transient outbound HTTP state that returned it
+	req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
+
 	// Kick off the async operation and set our listener, then return so that the thread can be re-used
 	context.issueAsyncRequest (req).setListener (new CompletionListener (callback, callbackUri, goldenThreads, internalStateId))
 	context.setNoResponse()
@@ -95,7 +98,6 @@ class CompletionListener implements INKFAsyncRequestListener
 
 		// Get the structured HTTP response object
 		HttpClientResponseRepresentation hcrr = httpResponse.getRepresentation() as HttpClientResponseRepresentation
-//println ("RECV: " + hcrr)
 
 		// If any golden thread IDs were given, attach them as dependencies to our response
 		if (goldenThreads.size() > 0) {
