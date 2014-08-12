@@ -47,6 +47,7 @@
 							<argument name="callback" desc="An instance of INKFAsyncRequestListener which will be called upon completion" min="0"/>
 							<argument name="callback-uri" desc="URI of a resource that will be passed an HttpClientResponseRepresentation instance (as arg 'http-response)'.  The response will be the passed through." min="0"/>
 							<argument name="golden-thread" desc="Golden Thread ID(s) to attach to the response" min="0" max="*"/>
+							<argument name="cut-golden-thread" desc="Golden Thread ID(s) to cut when creating this response" min="0" max="*"/>
 							<argument name="body" desc="Optional HTTP representation body" min="0"/>
 							<argument name="headers" desc="Optional HTTP headers to set on request" min="0"/>
 							<argument name="config" desc="Optional HTTP config (see active:httpGet)" min="0"/>

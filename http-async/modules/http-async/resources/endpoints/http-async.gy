@@ -35,8 +35,9 @@ try {
 	INKFAsyncRequestListener callback = (thisReq.argumentExists ("callback")) ? context.source ("arg:callback", INKFAsyncRequestListener.class) : null
 	String callbackUri = (thisReq.argumentExists ("callback-uri")) ? thisReq.getArgumentValue ("callback-uri") : null
 
-	// Get the list of golden threads to attach to our response
+	// Get the list of golden threads to attach/cut
 	List<String> goldenThreads = thisReq.getArgumentValues ("golden-thread")
+	List<String> goldenThreadsToCut = thisReq.getArgumentValues ("cut-golden-thread")
 
 	// If a state is provided, use it.  Otherwise if credentials are given then create a temp state using those
 	String stateId = (thisReq.argumentExists ("state")) ? context.source ("arg:state") : null
@@ -63,7 +64,7 @@ try {
 	req.setHeader (INKFRequest.HEADER_EXCLUDE_DEPENDENCIES, true);
 
 	// Kick off the async operation and set our listener, then return so that the thread can be re-used
-	context.issueAsyncRequest (req).setListener (new CompletionListener (callback, callbackUri, goldenThreads, internalStateId))
+	context.issueAsyncRequest (req).setListener (new CompletionListener (callback, callbackUri, goldenThreads, goldenThreadsToCut, internalStateId))
 	context.setNoResponse()
 } catch (e) {
 	e.printStackTrace()
@@ -81,13 +82,15 @@ class CompletionListener implements INKFAsyncRequestListener
 	String callbackUri
 	String stateId
 	List<String> goldenThreads
+	List<String> goldenThreadsToCut
 
-	CompletionListener (INKFAsyncRequestListener callback, String callbackUri, List<String> goldenThreads, String stateId)
+	CompletionListener (INKFAsyncRequestListener callback, String callbackUri, List<String> goldenThreads, List<String> goldenThreadsToCut, String stateId)
 	{
 		this.callback = callback
 		this.callbackUri = callbackUri
 		this.stateId = stateId
 		this.goldenThreads = goldenThreads
+		this.goldenThreadsToCut = goldenThreadsToCut
 	}
 
 	@Override
@@ -106,6 +109,13 @@ class CompletionListener implements INKFAsyncRequestListener
 			context.issueRequest (req)
 		}
 
+		// If any golden thread IDs were given cut, snip them now
+		if (goldenThreadsToCut.size() > 0) {
+			INKFRequest req = context.createRequest ("active:cutGoldenThread")
+			goldenThreadsToCut.each { String thread -> req.addArgument ("id", thread) }
+			context.issueRequest (req)
+		}
+
 		if (callback != null) {
 			// Delegate to the client-provided listener object
 			callback.receiveResponse (httpResponse, context)
@@ -120,12 +130,16 @@ class CompletionListener implements INKFAsyncRequestListener
 		} else {
 			// No client-provided handler, copy the HTTP response through as the response
 			// Note that this assumes that we're in the scope of an HTTP request and can construct a response
+			List<String> dontCopyHeaders = [ "content-length", "server", "connection", "keep-alive" ]
 			INKFResponse response = context.createResponseFrom (hcrr.getEntity())
 			response.setMimeType (hcrr.getHeader ("content-type"))
 			response.setHeader ("httpResponse:/code", hcrr.getResponseCode())
 
 			hcrr.getImplementingHDS().getNodes("//httpHeaders/*").each { IHDSNode node ->
-				response.setHeader ("httpResponse:/header/${ node.getName() }".toString(), node.getFirstValue ('.'))
+				String name = node.getName()
+				if ( ! dontCopyHeaders.contains (name.toLowerCase())) {
+					response.setHeader ("httpResponse:/header/${ name }".toString(), node.getValue())
+				}
 			}
 
 //			response.setExpiry (INKFResponse.EXPIRY_NEVER)
