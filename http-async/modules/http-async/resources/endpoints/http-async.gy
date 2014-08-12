@@ -109,7 +109,7 @@ class CompletionListener implements INKFAsyncRequestListener
 			context.issueRequest (req)
 		}
 
-		// If any golden thread IDs were given cut, snip them now
+		// If any golden thread IDs to cut were given, snip them now
 		if (goldenThreadsToCut.size() > 0) {
 			INKFRequest req = context.createRequest ("active:cutGoldenThread")
 			goldenThreadsToCut.each { String thread -> req.addArgument ("id", thread) }

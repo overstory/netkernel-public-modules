@@ -46,9 +46,7 @@
 		</import>
 		<import>
 			<uri>urn:org:netkernel:ext:layer1</uri>
-			<private/>
 		</import>
-
 		<import>
 			<uri>urn:org:netkernel:mod:restassured</uri>
 		</import>

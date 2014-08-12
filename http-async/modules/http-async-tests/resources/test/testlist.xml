@@ -69,4 +69,59 @@
 		</assert>
 	</test>
 
+	<test name="Async GET, string, expensive (1500ms), add golden thread">
+		<request>
+			<identifier>active:httpAsync</identifier>
+			<argument name="method" method="as-string">GET</argument>
+			<argument name="url">http://localhost:8080/http-async/test-server/delay/1500/This is expensive to get</argument>
+			<argument name="callback-uri">active:/httpAsync/test/return-string</argument>
+			<argument name="golden-thread">mythread1</argument>
+		</request>
+		<assert>
+			<notNull/>
+			<mimetype>text/plain</mimetype>
+			<stringEquals>This is expensive to get</stringEquals>
+		</assert>
+	</test>
+
+	<test name="Async GET, string, repeat to test cache">
+		<request>
+			<identifier>active:httpAsync</identifier>
+			<argument name="method" method="as-string">GET</argument>
+			<argument name="url">http://localhost:8080/http-async/test-server/delay/1500/This is expensive to get</argument>
+			<argument name="callback-uri">active:/httpAsync/test/return-string</argument>
+		</request>
+		<assert>
+			<maxTime>20</maxTime>
+			<notNull/>
+			<mimetype>text/plain</mimetype>
+			<stringEquals>This is expensive to get</stringEquals>
+		</assert>
+	</test>
+
+	<test name="Cut golden thread">
+		<request>
+			<identifier>active:cutGoldenThread</identifier>
+			<argument name="id">mythread1</argument>
+		</request>
+		<assert>
+			<null/>
+		</assert>
+	</test>
+
+	<test name="Async GET, string, repeat to test not cached (min 1500ms)">
+		<request>
+			<identifier>active:httpAsync</identifier>
+			<argument name="method" method="as-string">GET</argument>
+			<argument name="url">http://localhost:8080/http-async/test-server/delay/1500/This is expensive to get</argument>
+			<argument name="callback-uri">active:/httpAsync/test/return-string</argument>
+		</request>
+		<assert>
+			<minTime>1500</minTime>
+			<notNull/>
+			<mimetype>text/plain</mimetype>
+			<stringEquals>This is expensive to get</stringEquals>
+		</assert>
+	</test>
+
 </testlist>
