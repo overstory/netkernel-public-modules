@@ -90,6 +90,7 @@
 			<argument name="method" method="as-string">GET</argument>
 			<argument name="url">http://localhost:8080/http-async/test-server/delay/1500/This is expensive to get</argument>
 			<argument name="callback-uri">active:/httpAsync/test/return-string</argument>
+			<argument name="golden-thread">mythread1</argument>
 		</request>
 		<assert>
 			<maxTime>20</maxTime>
@@ -115,6 +116,7 @@
 			<argument name="method" method="as-string">GET</argument>
 			<argument name="url">http://localhost:8080/http-async/test-server/delay/1500/This is expensive to get</argument>
 			<argument name="callback-uri">active:/httpAsync/test/return-string</argument>
+			<argument name="golden-thread">mythread1</argument>
 		</request>
 		<assert>
 			<minTime>1500</minTime>

@@ -26,3 +26,4 @@ sleep (millis)
 
 INKFResponse response = context.createResponseFrom (body)
 response.setMimeType ("text/plain")
+response.setExpiry (INKFResponse.EXPIRY_ALWAYS)

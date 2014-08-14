@@ -9,3 +9,4 @@ String body = (context.getThisRequest().argumentExists ("body")) ? context.getTh
 INKFResponse response = context.createResponseFrom (body)
 response.setHeader ("httpResponse:/code", code)
 response.setMimeType ("text/plain")
+response.setExpiry (INKFResponse.EXPIRY_ALWAYS)
